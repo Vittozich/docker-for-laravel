@@ -1,0 +1,5 @@
+.env
+.env.backup
+/.idea
+/src
+/mysql

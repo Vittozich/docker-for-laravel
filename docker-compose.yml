@@ -12,7 +12,7 @@ services:
     ports:
       - "8088:80"
     volumes:
-      - ./src:${APP_PATH}
+      - ./src:/var/www/html
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - php
@@ -83,7 +83,7 @@ services:
       dockerfile: Dockerfile
     container_name: php_${APP_NAME}
     volumes:
-      - ./src:${APP_PATH}
+      - ./src:/var/www/html
     ports:
       - "9000:9000"
     networks:
@@ -96,8 +96,8 @@ services:
       dockerfile: Dockerfile
     container_name: composer_${APP_NAME}
     volumes:
-      - ./src:${APP_PATH}
-    working_dir: ${APP_PATH}
+      - ./src:/var/www/html
+    working_dir: /var/www/html
     entrypoint: ['composer']
     networks:
       - laravel
@@ -108,11 +108,11 @@ services:
       dockerfile: Dockerfile
     container_name: artisan_${APP_NAME}
     volumes:
-      - ./src:${APP_PATH}
+      - ./src:/var/www/html
     depends_on:
       - mysql
-    working_dir: ${APP_PATH}
-    entrypoint: ['php','${APP_PATH}/artisan']
+    working_dir: /var/www/html
+    entrypoint: ['php','/var/www/html/artisan']
     networks:
       - laravel
 
@@ -120,8 +120,8 @@ services:
     image: library/node
     container_name: npm${APP_NAME}
     volumes:
-      - ./src:${APP_PATH}
-    working_dir: ${APP_PATH}
+      - ./src:/var/www/html
+    working_dir: /var/www/html
     entrypoint: ['npm']
     networks:
       - laravel

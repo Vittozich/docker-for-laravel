@@ -8,7 +8,7 @@ networks:
 services:
   nginx:
     image: library/nginx:stable-alpine
-    container_name: nginx${APP_NAME}
+    container_name: nginx_${APP_NAME}
     ports:
       - "8088:80"
     volumes:
@@ -23,7 +23,7 @@ services:
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    container_name: phpmyadmin${APP_NAME}
+    container_name: phpmyadmin_${APP_NAME}
     restart: unless-stopped
     ports:
       - '3001:80'
@@ -37,7 +37,7 @@ services:
 
   mysql:
     image: library/mysql:8
-    container_name: mysql${APP_NAME}
+    container_name: mysql_${APP_NAME}
     restart: unless-stopped
     tty: true
     command: --innodb_use_native_aio=0
@@ -46,7 +46,27 @@ services:
     volumes:
       - ./mysql:/var/lib/mysql
       - ./mysqlconf:/etc/mysql/conf.d
-      - ./mysqlconf/init:/docker-entrypoint-initdb.d
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      SERVICE_TAGS: ${SERVICE_TAGS}
+      SERVICE_NAME: ${SERVICE_NAME}
+    networks:
+      - laravel
+
+  mysql_test:
+    image: library/mysql:8
+    container_name: mysql_test_${APP_NAME}
+    restart: unless-stopped
+    tty: true
+    command: --innodb_use_native_aio=0
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./mysql_test:/var/lib/mysql
+      - ./mysqlconf:/etc/mysql/conf.d
     environment:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
@@ -61,7 +81,7 @@ services:
     build:
       context: ./php
       dockerfile: Dockerfile
-    container_name: php${APP_NAME}
+    container_name: php_${APP_NAME}
     volumes:
       - ./src:${APP_PATH}
     ports:
@@ -74,11 +94,25 @@ services:
     build:
       context: ./php/composer
       dockerfile: Dockerfile
-    container_name: composer${APP_NAME}
+    container_name: composer_${APP_NAME}
     volumes:
       - ./src:${APP_PATH}
     working_dir: ${APP_PATH}
     entrypoint: ['composer']
+    networks:
+      - laravel
+
+  artisan:
+    build:
+      context: ./php
+      dockerfile: Dockerfile
+    container_name: artisan_${APP_NAME}
+    volumes:
+      - ./src:${APP_PATH}
+    depends_on:
+      - mysql
+    working_dir: ${APP_PATH}
+    entrypoint: ['php','${APP_PATH}/artisan']
     networks:
       - laravel
 
@@ -92,17 +126,4 @@ services:
     networks:
       - laravel
 
-  artisan:
-    build:
-      context: ./php
-      dockerfile: Dockerfile
-    container_name: artisan${APP_NAME}
-    volumes:
-      - ./src:${APP_PATH}
-    depends_on:
-      - mysql
-    working_dir: ${APP_PATH}
-    entrypoint: ['php','${APP_PATH}/artisan']
-    networks:
-      - laravel
 

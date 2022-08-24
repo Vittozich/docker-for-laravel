@@ -6,6 +6,12 @@
 
     mkdir src mysql mysql_test
 
+или (если на винде)
+
+    mkdir src
+    mkdir mysql
+    mkdir mysql_test
+
 Копировать .env.example в .env для докера
 
     cp .env.example .env
@@ -19,6 +25,10 @@
 Далее можно использовать как этот образ, так и просто скопировать конфигурацию с необходимым `.env` и скопировать или установить laravel проект в папку `src` со своим `.git`, они не будут пересекаться.
 
 Нужно учитывать конфликт портов.
+
+Для создания проекта с нуля, просто выполнить команду 
+
+    docker-compose run --rm composer create-project laravel/laravel .
 
 # Containers:
 

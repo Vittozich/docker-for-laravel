@@ -2,7 +2,7 @@
 
 ## Запуск
 
-Чтобы не вызвало ошибок:
+Создать папки для базы данных, чтобы не вызвало ошибок:
 
     mkdir src mysql mysql_test
 
@@ -16,11 +16,11 @@
 
     cp .env.example .env
 
-Сконфигурировать `.env` файл по своему усмотрению, назвать проект по-своему.
+Сконфигурировать `.env` файл по своему усмотрению, назвать `APP_NAME` проект по-своему, для того, чтобы не путались имена контейнеров
 
 И уже после всего этого создать контейнеры
 
-    docker-compose up -d --build
+    docker compose up -d --build
 
 Далее можно использовать как этот образ, так и просто скопировать конфигурацию с необходимым `.env` и скопировать или установить laravel проект в папку `src` со своим `.git`, они не будут пересекаться.
 
@@ -32,11 +32,15 @@
 
 # Containers:
 
-- [php:8-fpm-alpine](https://registry.hub.docker.com/_/php) (build)
+todo перейти с alpine на нормальные версии (пока сборка неверная)
+todo переписать все команды с версии docker-compose 1 на docker compose 2
+todo сделать пояснения по работе с контейнерами, с флагами и как управлять контейнерами.
+
+- [php:8.2-fpm](https://hub.docker.com/layers/library/php/8.2-fpm/images/sha256-30c7cc859f45eced5d70913703281148a7ba3e0afdfb885a7ef311cbe3cf9344?context=explore) (build)
 - [mysql:8](https://registry.hub.docker.com/_/mysql) (image)
 - [nginx:stable-alpine](https://hub.docker.com/_/nginx) (image)
 - [phpmyadmin/phpmyadmin](https://registry.hub.docker.com/r/phpmyadmin/phpmyadmin) (image)
-- [composer:latest](https://registry.hub.docker.com/_/composer) (build as php but +)
+- [composer как php:8.2-fpm](https://hub.docker.com/layers/library/php/8.2-fpm/images/sha256-30c7cc859f45eced5d70913703281148a7ba3e0afdfb885a7ef311cbe3cf9344?context=explore) (build as php but +)
 - [library/node](https://registry.hub.docker.com/_/node) (image, npm)
 
 # Команды:
